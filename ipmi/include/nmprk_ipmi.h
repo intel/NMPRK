@@ -27,14 +27,14 @@ namespace nmprk {
   namespace ipmi {
 
     typedef enum {
-      device_dcmi = 0x01,
-      device_dnm = 0x02,
+      //device_dcmi = 0x01,       // jrm, removed support for DCMI.
+      //device_dnm = 0x02,				// jrm, removed option for DNM support as it was never implemented.
       device_nm = 0x03
     }deviceType_t;
 
 	typedef enum
 	{
-      cipherSuite_0 = 0,
+    cipherSuite_0 = 0,
 	  cipherSuite_1 = 1,
 	  cipherSuite_2 = 2,
 	  cipherSuite_3 = 3,
@@ -67,29 +67,28 @@ namespace nmprk {
       void*        intf;
 	  // how we access on windows;
 	  unsigned int handle;
-      device() : type(device_dcmi), address("local"), user(""), password(""), bridge(defaultBridge), transport(defaultTrans), cipher(defaultCipherSuite), intf(NULL)
-		{};
+    //device() : type(device_dcmi), address("local"), user(""), password(""), bridge(defaultBridge), transport(defaultTrans), cipher(defaultCipherSuite), intf(NULL)
+    device() : type(device_nm), address("local"), user(""), password(""), bridge(defaultBridge), transport(defaultTrans), cipher(defaultCipherSuite), intf(NULL)
+    {};
 
 	  device(deviceType_t Type, std::string Address,std::string User,std::string Password):
 	    type(Type), address(Address), user(User), password(Password), bridge(defaultBridge), transport(defaultTrans), cipher(defaultCipherSuite), intf(NULL)
 		{}
 
-      device(deviceType_t Type, std::string Address,std::string User,std::string Password,byte_t Bridge,byte_t Transport):
-        type(Type), address(Address), user(User), password(Password), bridge(Bridge), transport(Transport), cipher(defaultCipherSuite), intf(NULL)
+    device(deviceType_t Type, std::string Address,std::string User,std::string Password,byte_t Bridge,byte_t Transport):
+      type(Type), address(Address), user(User), password(Password), bridge(Bridge), transport(Transport), cipher(defaultCipherSuite), intf(NULL)
 		{}
 
 	  device(deviceType_t Type, std::string Address,std::string User,std::string Password,byte_t Bridge,byte_t Transport, ipmiCipherSuite_t Cipher):
-        type(Type), address(Address), user(User), password(Password), bridge(Bridge), transport(Transport), cipher(Cipher), intf(NULL)
+      type(Type), address(Address), user(User), password(Password), bridge(Bridge), transport(Transport), cipher(Cipher), intf(NULL)
 		{}
     };
 
     bool connectDevice(device* d);
- 
     bool disconnectDevice(device* d);
-
     bool runIpmiCommand(device* d, commandReq_t* req,commandRsp_t* rsp);
-
     bool initSystemForLocal();
+    bool ipmi_rspCodes(int rspCode);
 
   };
 

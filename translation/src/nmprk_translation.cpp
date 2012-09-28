@@ -71,11 +71,31 @@ bool     nmprk::translation::swSubSystemSetup(nmprk::translation::initType_t ini
  
  return ret;
 }
-   
-nmprk::translation::capabilities_t*    nmprk::translation::getCapabilities(nmprk::ipmi::device* d) {
- nmprk::translation::capabilities_t* ret = NULL;
+
+nmprk::translation::nmVersion_t* nmprk::translation::getNMVersion(nmprk::ipmi::device* d) 
+{
+  nmprk::translation::nmVersion_t* ret = NULL;
  
- if(d != NULL) {
+  if(d != NULL) 
+  {
+    switch(d->type) {
+    case 0x01:  // dcmi
+    case 0x02:  // dnm
+    case 0x03:  // NM
+      ret = nmprk::translation::nm_dnm::nm_dnm_getNMVersion(d);
+      break;
+    };
+  }else{
+    throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
+  }
+  return ret;
+}
+   
+nmprk::translation::capabilities_t* nmprk::translation::getCapabilities(nmprk::ipmi::device* d) 
+{
+  nmprk::translation::capabilities_t* ret = NULL;
+ 
+  if(d != NULL) {
 
    switch(d->type) {
     case 0x01:  // dcmi
@@ -211,11 +231,11 @@ bool     nmprk::translation::setPolicyStatus(nmprk::ipmi::device* d,nmprk::trans
 
   switch(d->type) {
   case 0x01:  // dcmi
-   ret = nmprk::translation::dcmi::dcmi_setPolicy(d,policy);
+   ret = nmprk::translation::dcmi::dcmi_setPolicyStatus(d,policy,state);
    break;
   case 0x02:  // dnm
   case 0x03:  // NM
-   ret = nmprk::translation::nm_dnm::nm_dnm_setPolicy(d,policy);
+   ret = nmprk::translation::nm_dnm::nm_dnm_setPolicyStatus(d,policy,state);
    break;
   }; 
 

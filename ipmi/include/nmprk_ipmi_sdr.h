@@ -32,7 +32,9 @@ namespace nmprk {
 
       nmprk::ipmi::record_t*   getSdrRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId);
 
-      bool addSdrRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId,nmprk::ipmi::record_t* record);
+      void setupSdrCall(nmprk::ipmi::commandReq_t *,  nmprk::ipmi::commandRsp_t *, int, int, int, int, int, int);
+
+	  bool addSdrRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId,nmprk::ipmi::record_t* record);
 
       bool delSdrRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId); 
 

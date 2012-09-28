@@ -181,7 +181,8 @@ Using the nmprk library:
 11. You have now created your first application using the nmprk library
 
 Full source code listing:
-// usingNmprkExample.cpp : Defines the entry point for the console application.
+// usingNmprkExample.cpp : Defines the entry point for the console application.  For the most up-to-date example code, please check
+// the testIpmi.cpp and the testTranslation.cpp applications that are provided with the NMPRK.
 //
 
 #include "stdafx.h"

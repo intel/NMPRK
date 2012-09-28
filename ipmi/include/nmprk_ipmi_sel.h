@@ -32,7 +32,7 @@ namespace nmprk {
 
       nmprk::ipmi::record_t*   getSelRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId);
 
-      bool                     addSelRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId,nmprk::ipmi::record_t* record);
+      //bool                     addSelRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId,nmprk::ipmi::record_t* record);
 
       bool                     delSelRecord(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId);
 

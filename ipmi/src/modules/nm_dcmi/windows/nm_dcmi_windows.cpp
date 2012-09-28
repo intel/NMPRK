@@ -12,7 +12,7 @@
  ***************************************************************************/
 /**************************************************************************
  * Author: Stewart Dale <IASI NM TEAM>                                    *
- * Updates:							                                      *
+ * Updates:							                                                  *
  * 4/30: prep for initial external release                                *
  **************************************************************************/
 #include <Windows.h>
@@ -32,38 +32,38 @@
 
 static 	TransportPluginLoader transportPluginLoader;
 
-bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_connectToDevice(nmprk::ipmi::device* d) {
- bool ret = false;
- if(d != NULL) {
-	int iError;
+bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_connectToDevice(nmprk::ipmi::device* d) 
+{
+  bool ret = false;
+  if(d != NULL) 
+  {
+	  int iError;
 
-	 try
+	  try
     {
         PluginId transportPlugins[] =
         {
-			TP_KCS, "TransportKCS"
+			    TP_KCS, "TransportKCS"
         };
         transportPluginLoader.load(std::vector<PluginId>(transportPlugins,
                         transportPlugins + sizeof(transportPlugins)/sizeof(PluginId)));
     }
     catch (std::exception& e)
     {
-		throw new nmprk::nmprkException(NMPRK_FAILED_INIT_DLL_CODE,NMPRK_FAILED_INIT_DLL_MSG); 
+		  throw new nmprk::nmprkException(NMPRK_FAILED_INIT_DLL_CODE,NMPRK_FAILED_INIT_DLL_MSG); 
     }
 
-	transport_plugin_interface* intf = NULL;
-	intf = transportPluginLoader.getPluginById(TP_KCS);
-	iError = intf->ipmiConnect(IPMI_SESSION_HANDLE_DEFAULT);
-	if(iError != SUCCESS) {
-		throw new nmprk::nmprkException(NMPRK_FAILED_OPEN_KCS_CODE,NMPRK_FAILED_OPEN_KCS_MSG);
-	}
-	ret = true;
-	
-
- }else{
-	 throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
- }
- return ret;
+	  transport_plugin_interface* intf = NULL;
+	  intf = transportPluginLoader.getPluginById(TP_KCS);
+	  iError = intf->ipmiConnect(IPMI_SESSION_HANDLE_DEFAULT);
+	  if(iError != SUCCESS) {
+		  throw new nmprk::nmprkException(NMPRK_FAILED_OPEN_KCS_CODE,NMPRK_FAILED_OPEN_KCS_MSG);
+	  }
+	  ret = true;
+  }else{
+	  throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
+  }
+  return ret;
 }
 
 bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_remote_connectToDevice(nmprk::ipmi::device* d) {
@@ -134,20 +134,22 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_disconnectDevice(nmprk::ipmi:
  return ret;
 }
 
-bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_remote_disconnectDevice(nmprk::ipmi::device* d) {
- bool ret = false;
- if(d != NULL) {
-	 // Software Forge Inc. --- Start ------------------------------------------
-	 // Removed check of d->intf, it was not necessary
-	 // Software Forge Inc. --- End --------------------------------------------
-	transport_plugin_interface* intf = transportPluginLoader.getPluginById(TP_RMCPP);
-	int iError = intf->ipmiDisconnect(d->handle);
-	if(iError == SUCCESS)
-		ret = true;
- }else{
-	 throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
- }
- return ret;
+bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_remote_disconnectDevice(nmprk::ipmi::device* d) 
+{
+  bool ret = false;
+  if(d != NULL) 
+  {
+	  // Software Forge Inc. --- Start ------------------------------------------
+	  // Removed check of d->intf, it was not necessary
+	  // Software Forge Inc. --- End --------------------------------------------
+	  transport_plugin_interface* intf = transportPluginLoader.getPluginById(TP_RMCPP);
+	  int iError = intf->ipmiDisconnect(d->handle);
+	  if(iError == SUCCESS)
+		  ret = true;
+  }else{
+	  throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
+  }
+  return ret;
 }
 
 bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::device* d, nmprk::ipmi::commandReq_t* req, nmprk::ipmi::commandRsp_t* rsp) {
@@ -170,7 +172,7 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::d
 	// Software Forge Inc. --- Start ------------------------------------------
 	// Last two bytes were being stripped of each message
 	//for(int i = 2; i < req->data.size() - 2 ; i++)
-	for(int i = 2; i < req->data.size() ; i++)
+	for(unsigned int i = 2; i < req->data.size() ; i++)
 	// Software Forge Inc. --- End --------------------------------------------
 	 bireq.addDataByte(nmprk::helper::hexStr2Int(req->data[i]));
 
@@ -209,7 +211,7 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::d
 		// This was missing
 		rsp->rspCode = theRsp.compCode;
 		// Software Forge Inc. --- End --------------------------------------------
-		for(int i = 0; i < theRsp.len ; i ++ )
+		for(unsigned int i = 0; i < theRsp.len ; i ++ )
 			rsp->data.push_back(nmprk::helper::int2HexStr(theRsp.data[i]));
 
 	  }
@@ -233,7 +235,7 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::d
 
 	// Software Forge Inc. --- Start ------------------------------------------
 	// Last two bytes were being stripped of each message
-	for(int i = 2; i < req->data.size(); i++)
+	for(unsigned int i = 2; i < req->data.size(); i++)
 	  _req.data[i-2] = nmprk::helper::hexStr2Int(req->data[i]);
 	// Software Forge Inc. --- End --------------------------------------------
 
@@ -244,7 +246,7 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::d
 	rsp->rspCode = _rsp.compCode;
 	if(iError == SUCCESS) {
 	  ret = true;
-	  for(int i = 0; i < _rsp.len ; i ++ )
+	  for(unsigned int i = 0; i < _rsp.len ; i ++ )
 		  rsp->data.push_back(nmprk::helper::int2HexStr(_rsp.data[i]));
 	}
 #ifndef WONTBE
@@ -256,106 +258,110 @@ bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_local_runIpmiCommand(nmprk::ipmi::d
   return ret;
 }
 
-bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_remote_runIpmiCommand(nmprk::ipmi::device* d, nmprk::ipmi::commandReq_t* req, nmprk::ipmi::commandRsp_t* rsp) {
+bool  nmprk::ipmi::modules::nm_dcmi::nm_dcmi_remote_runIpmiCommand(nmprk::ipmi::device* d, nmprk::ipmi::commandReq_t* req, nmprk::ipmi::commandRsp_t* rsp) 
+{
   bool ret = false;
   int  iError;
- if(d != NULL && req != NULL && rsp != NULL) {
-  transport_plugin_interface* intf = transportPluginLoader.getPluginById(TP_RMCPP);
+  if(d != NULL && req != NULL && rsp != NULL) 
+  {
+    transport_plugin_interface* intf = transportPluginLoader.getPluginById(TP_RMCPP);
+ 
+    if(req->data.size() < 2)
+	    throw new nmprk::nmprkException(NMPRK_REQ_NOT_ENOUGH_ARGS_CODE,NMPRK_REQ_NOT_ENOUGH_ARGS_MSG);
   
-  if(req->data.size() < 2)
-	  throw new nmprk::nmprkException(NMPRK_REQ_NOT_ENOUGH_ARGS_CODE,NMPRK_REQ_NOT_ENOUGH_ARGS_MSG);
-  
-  dcmi_req_t _req;
+    dcmi_req_t _req;
 
-  // this is to support bridged commands
-  if(d->bridge != nmprk::ipmi::defaultBridge && d->transport != nmprk::ipmi::defaultTrans) {
+    // this is to support bridged commands
+    if(d->bridge != nmprk::ipmi::defaultBridge && d->transport != nmprk::ipmi::defaultTrans) 
+    {
 
-    IpmiRequest ireq((unsigned char)nmprk::helper::hexStr2Int(req->data[0]),(unsigned char)nmprk::helper::hexStr2Int(req->data[1]),d->transport);
+      IpmiRequest ireq((unsigned char)nmprk::helper::hexStr2Int(req->data[0]),(unsigned char)nmprk::helper::hexStr2Int(req->data[1]),d->transport);
 	
-	BridgedIpmiRequest bireq(0x20,0x00,d->bridge,ireq,"",true);
+	    BridgedIpmiRequest bireq(0x20,0x00,d->bridge,ireq,"",true);
 
-	// Software Forge Inc. --- Start ------------------------------------------
-	// Last two bytes were being stripped of each message
-	//for(int i = 2; i < req->data.size() - 2 ; i++)
-	for(int i = 2; i < req->data.size() ; i++)
-	// Software Forge Inc. --- End --------------------------------------------
-	 bireq.addDataByte(nmprk::helper::hexStr2Int(req->data[i]));
+	    // Software Forge Inc. --- Start ------------------------------------------
+	    // Last two bytes were being stripped of each message
+	    //for(int i = 2; i < req->data.size() - 2 ; i++)
+	    for(unsigned int i = 2; i < req->data.size() ; i++)
+	    // Software Forge Inc. --- End --------------------------------------------
+	    bireq.addDataByte(nmprk::helper::hexStr2Int(req->data[i]));
 
-	 _req = bireq.getRequestStruct();
-	 dcmi_rsp_t _rsp;
-     memset((dcmi_rsp_t*)&_rsp,0x00, sizeof(struct dcmi_rsp_t));
+	    _req = bireq.getRequestStruct();
+	    dcmi_rsp_t _rsp;
+      memset((dcmi_rsp_t*)&_rsp,0x00, sizeof(struct dcmi_rsp_t));
 
-     iError = intf->ipmiSendCmd(d->handle,&_req,&_rsp);
-     rsp->rspCode = _rsp.compCode;
-     if(iError == SUCCESS) {
-	  ret = true;
-	  IpmiRequest req(0x06, 0x33, 0x20, 0x00); 
-	  bool timeout = false;
-	  try
-	  {
-		struct timeval timeoutTime;
-		timeoutTime.tv_sec = 5;
-		timeoutTime.tv_usec = 0;
+      iError = intf->ipmiSendCmd(d->handle,&_req,&_rsp);
+      rsp->rspCode = _rsp.compCode;
+      if(iError == SUCCESS) 
+      {
+	      ret = true;
+	      IpmiRequest req(0x06, 0x33, 0x20, 0x00); 
+	      bool timeout = false;
+	      try
+	      {
+		      struct timeval timeoutTime;
+      		timeoutTime.tv_sec = 5;
+		      timeoutTime.tv_usec = 0;
 
-		dcmi_rsp_t theRsp;
+		      dcmi_rsp_t theRsp;
 
-		int iError = intf->ipmiRecvData(d->handle, timeoutTime, &timeout, &theRsp);
-		if(iError != SUCCESS)
-		{
-			std::stringstream ss;
-			ss << "ipmiRecvData returned an error: " << iError;
-			throw new nmprk::nmprkException(NMPRK_BRIDGE_IPMIRECV_ERR_CODE,ss.str());
-		}
+		      int iError = intf->ipmiRecvData(d->handle, timeoutTime, &timeout, &theRsp);
+		      if(iError != SUCCESS)
+		      {
+			      std::stringstream ss;
+			      ss << "ipmiRecvData returned an error: " << iError;
+			      throw new nmprk::nmprkException(NMPRK_BRIDGE_IPMIRECV_ERR_CODE,ss.str());
+		      }
 
-		if(timeout)
-		{
-			throw new nmprk::nmprkException(NMPRK_BRIDGE_RECV_TIMEOUT_CODE,NMPRK_BRIDGE_RECV_TIMEOUT_MSG);
-		}
-		ret = true;
-		// Software Forge Inc. --- Start ------------------------------------------
-		// This was missing
-		rsp->rspCode = theRsp.compCode;
-		// Software Forge Inc. --- End --------------------------------------------
-		for(int i = 0; i < theRsp.len ; i ++ )
-			rsp->data.push_back(nmprk::helper::int2HexStr(theRsp.data[i]));
+		      if(timeout)
+		      {
+			      throw new nmprk::nmprkException(NMPRK_BRIDGE_RECV_TIMEOUT_CODE,NMPRK_BRIDGE_RECV_TIMEOUT_MSG);
+		      }
+		      ret = true;
+		      // Software Forge Inc. --- Start ------------------------------------------
+		      // This was missing
+		      rsp->rspCode = theRsp.compCode;
+		      // Software Forge Inc. --- End --------------------------------------------
+		      for(unsigned int i = 0; i < theRsp.len ; i ++ )
+			      rsp->data.push_back(nmprk::helper::int2HexStr(theRsp.data[i]));
 
-	  }
-	  catch(std::exception& ex)
-	  {
-		std::stringstream ss;
-		ss << "ipmiRecvData exception: " << ex.what();
-		throw new nmprk::nmprkException(NMPRK_BRIDGE_RECV_DATA_ERR_CODE,ss.str());
-	  } 
+	      }
+    	  catch(std::exception& ex)
+	      {
+		      std::stringstream ss;
+		      ss << "ipmiRecvData exception: " << ex.what();
+		      throw new nmprk::nmprkException(NMPRK_BRIDGE_RECV_DATA_ERR_CODE,ss.str());
+	      } 
+      }
+    }else{
+    	memset((dcmi_req_t*)&_req,0x00,sizeof(struct dcmi_req_t));
+	    _req.netFun = (unsigned char)nmprk::helper::hexStr2Int(req->data[0]);
+	    _req.cmd    = (unsigned char)nmprk::helper::hexStr2Int(req->data[1]);
+	    _req.rsAddr = 0x20;
+	    _req.rsLun = 0x00;
+	    _req.len = req->data.size() - 2;
 
+	    // Software Forge Inc. --- Start ------------------------------------------
+	    // Last two bytes were being stripped of each message
+	    for(unsigned int i = 2; i < req->data.size(); i++)
+	      _req.data[i-2] = nmprk::helper::hexStr2Int(req->data[i]);
+	    // Software Forge Inc. --- End --------------------------------------------
+
+	    dcmi_rsp_t _rsp;
+      memset((dcmi_rsp_t*)&_rsp,0x00, sizeof(struct dcmi_rsp_t));
+
+      iError = intf->ipmiSendCmd(d->handle,&_req,&_rsp);
+      rsp->rspCode = _rsp.compCode;
+      if(iError == SUCCESS) 
+      {
+	      ret = true;
+	      for(unsigned int i = 0; i < _rsp.len ; i ++ )
+	        rsp->data.push_back(nmprk::helper::int2HexStr(_rsp.data[i]));
+      }
     }
   }else{
-	memset((dcmi_req_t*)&_req,0x00,sizeof(struct dcmi_req_t));
-	_req.netFun = (unsigned char)nmprk::helper::hexStr2Int(req->data[0]);
-	_req.cmd    = (unsigned char)nmprk::helper::hexStr2Int(req->data[1]);
-	_req.rsAddr = 0x20;
-	_req.rsLun = 0x00;
-	_req.len = req->data.size() - 2;
-
-	// Software Forge Inc. --- Start ------------------------------------------
-	// Last two bytes were being stripped of each message
-	for(int i = 2; i < req->data.size(); i++)
-	  _req.data[i-2] = nmprk::helper::hexStr2Int(req->data[i]);
-	// Software Forge Inc. --- End --------------------------------------------
-
-	dcmi_rsp_t _rsp;
-    memset((dcmi_rsp_t*)&_rsp,0x00, sizeof(struct dcmi_rsp_t));
-
-    iError = intf->ipmiSendCmd(d->handle,&_req,&_rsp);
-    rsp->rspCode = _rsp.compCode;
-    if(iError == SUCCESS) {
-	 ret = true;
-	 for(int i = 0; i < _rsp.len ; i ++ )
-	  rsp->data.push_back(nmprk::helper::int2HexStr(_rsp.data[i]));
-    }
+	  throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
   }
- }else{
-	 throw new nmprk::nmprkException(NMPRK_NULL_CODE,NMPRK_NULL_MSG);
- }
   return ret;
 }
 

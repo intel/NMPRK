@@ -57,7 +57,7 @@ bool IpmiProxy::GetIpmiProxyInstance(IpmiProxy **proxy, std::string& errorMessag
 		LOG_LODEBUG << "msDriverEnabled: " << msDriverEnabled;
 		imbDriverEnabled = IsDeviceEnabled(imbDevName);
 		LOG_LODEBUG << "imbDriverEnabled: " << imbDriverEnabled;
-
+/* Disabled this test, because it was failing and there is no issue with both drivers being enabled.
 		if(msDriverEnabled == true && imbDriverEnabled == true)
 		{
 			LOG_LODEBUG << "both drivers enabled!";
@@ -78,7 +78,8 @@ bool IpmiProxy::GetIpmiProxyInstance(IpmiProxy **proxy, std::string& errorMessag
 				}
 			}
 		}
-		else if(msDriverEnabled == false && imbDriverEnabled == false)
+		else */
+    if(msDriverEnabled == false && imbDriverEnabled == false)
 		{
 			LOG_LODEBUG << "both drivers disabled!";
 

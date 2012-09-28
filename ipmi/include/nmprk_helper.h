@@ -28,9 +28,9 @@ namespace nmprk {
     std::string int2HexStr(int i); 
     std::string int2BinStr(int i);
     int binStr2Int(std::string str);
-	// Software Forge Inc. --- Start ------------------------------------------
-	std::string getByteStr(unsigned long long val, int byteIndex); // byteIndex 0 is least significant
-	// Software Forge Inc. --- End --------------------------------------------
+	  // Software Forge Inc. --- Start ------------------------------------------
+	  std::string getByteStr(unsigned long long val, int byteIndex); // byteIndex 0 is least significant
+	  // Software Forge Inc. --- End --------------------------------------------
   };
 
 }; 

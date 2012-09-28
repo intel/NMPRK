@@ -30,7 +30,7 @@ namespace nmprk {
   public:
     nmprk::ipmi::byte_t errorCode;
     std::string errorMsg;
-  nmprkException(nmprk::ipmi::byte_t code,std::string msg) throw () : errorCode(code), errorMsg(msg) 
+    nmprkException(nmprk::ipmi::byte_t code,std::string msg) throw () : errorCode(code), errorMsg(msg) 
     {}
   };
 

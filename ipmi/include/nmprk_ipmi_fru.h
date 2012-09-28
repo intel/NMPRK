@@ -28,9 +28,8 @@ namespace nmprk {
     namespace fru {
       
       nmprk::ipmi::fruInfo_t*  getFruInfo(nmprk::ipmi::device* d);
-
-      nmprk::ipmi::record_t*   getFruData(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId);
-
+      nmprk::ipmi::record_t*   getFruRpry(nmprk::ipmi::device* d);
+      nmprk::ipmi::record_t*   getFruData(nmprk::ipmi::device* d, int offset, int length);
       bool                     setFruData(nmprk::ipmi::device* d,nmprk::ipmi::address_t* recordId,nmprk::ipmi::record_t* record);
 
     };

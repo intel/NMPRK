@@ -16,6 +16,7 @@
  * 4/30: prep for initial external release                                *
  **************************************************************************/
 #include "../include/nmprk_helper.h"
+#include "../../ipmi/include/nmprk_errCodes.h"
 
 #include <sstream>
 #include <iomanip>
@@ -54,7 +55,7 @@ std::string nmprk::helper::int2BinStr(int n) {
 }
 
 int nmprk::helper::binStr2Int(std::string s) {
- int  b, k, m, n;
+ int  k;
  int  len, sum = 0;
  	
  // Software Forge Inc. --- Start ------------------------------------------
@@ -74,4 +75,3 @@ std::string nmprk::helper::getByteStr(unsigned long long val, int byteIndex) {
 	return ss.str();
 }
 // Software Forge Inc. --- End --------------------------------------------
-

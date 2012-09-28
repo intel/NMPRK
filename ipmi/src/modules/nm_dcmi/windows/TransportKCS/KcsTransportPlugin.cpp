@@ -209,7 +209,7 @@ Ipmi_RecvData(IPMI_SESSION_HANDLE h, const timeval timeoutVal, bool *timeout, dc
 				{
 					rsp->compCode = rsp1.data[6];
 					rsp->len = 0;
-					for(int i=7; i<rsp1.len-1; i++)
+					for(unsigned int i=7; i < rsp1.len-1; i++)
 						rsp->data[rsp->len++] = rsp1.data[i];
 				}
 				break;

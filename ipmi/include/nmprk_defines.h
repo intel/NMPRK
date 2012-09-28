@@ -56,7 +56,7 @@ namespace nmprk {
 
     typedef struct {
       byte_t       repoVersion;        // Version of the SEL
-      unsigned int repoEntries;       // get total entries in SEL
+      unsigned int repoEntries;        // get total entries in SEL
       unsigned int repoFreeSpace;      // the amount of space left in the SEL
       tm           mostRecentAddTS;    // Timestamp from the last add command
       tm           mostRecentDelTS;    // timestamp from the last delete command
@@ -64,6 +64,8 @@ namespace nmprk {
       bool         reserveSup;         // reserve sel supported
       bool         parAddSup;          // partial add sel support
       bool         delSup;             // sel supports delete 
+      bool         nonmodalSupported;  // non-modal SDR Repository update supported
+      bool         modalSupported;     // modal SDR Repository update supported
     }repoInfo_t;
 
     typedef struct {
@@ -73,7 +75,7 @@ namespace nmprk {
   
     typedef struct {
       address_t nextRecord;            // address of next record
-      byte_t data[256];                    // record data
+      byte_t data[1024];               // record data
       unsigned int len;                // length of data field
     }record_t;
 

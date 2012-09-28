@@ -32,14 +32,25 @@ namespace nmprk {
   }initType_t;
 
   typedef enum {
+   automaticMode      = 0x00,
+   forceNonAggressive = 0x01,
+   forceAggressive    = 0x02
+  }aggressiveCorrect_t;
+
+  typedef enum {
    domainSystem = 0x00,
    domainCpu    = 0x01,
    domainMemory = 0x02
   }subSystemComponentType_t;
   
   typedef enum {
-   policyPower   = 0x00,   
-   policyThermal = 0x01
+   policyPower			 = 0x00,		// bad name, better name is noPolicyTrigger.  Kept for compatibility
+   noPolicyTrigger       = 0x00,	 
+   policyThermal		 = 0x01,		// bad name, better name is inletTempTrigger.  Kept for compatibility
+   inletTempTrigger      = 0x01,
+   missingPowerTimeout   = 0x02,
+   afterHostResetTrigger = 0x03,
+   bootTimePolicy        = 0x04
   }policyType_t;
  
   typedef enum {
@@ -53,22 +64,38 @@ namespace nmprk {
    policyUnset    = 0x02
   }policyStatusType_t;
 
+  // Manufanufacturer ID				# bytes 1-3
+  //  hard coded to Intel
+  // Domain ID							# byte 4
+  //  component is domain id
+  // Policy ID							# byte 5
+  //  unsigned int policyId; (should be 0-15)
+  // Policy Type/Policy Trigger Type	# byte 6
+  //  unsigned int policyLimit
+  //  unsigned int policyConfigurationAction???
+  //  unsigned int aggressiveCpuPowerCorrection???
+  //  unsigned int policyTriggerType???
+  //  unsigned int policyStorageOption???
+  // Policy Exception Actions			# byte 7
+  // Policy Target Limit				# bytes 8:9
+  // Correction Time Limit				# bytes 10-13
+  // Policy Trigger Limit				# bytes 14:15
+  // Statistics Reporting Period		# bytes 16:17 
+
   typedef struct {
    nmprk::translation::subSystemComponentType_t component;
    unsigned int policyId;
-   nmprk::translation::policyType_t policyType;
+   unsigned int policyType;			    // Unfortunately called policyType, really should be policyTriggerType.
    unsigned int policyLimit;
-   // Software Forge Inc. --- Start ------------------------------------------
-   // TODO: Need a policy trigger type variable
-   // Software Forge Inc. --- End --------------------------------------------
-   unsigned int policyTriggerLimit;
+   unsigned int policyTriggerLimit;	// Used to contain the trigger point, such as the thermal trigger point.
    bool         sendAlert;
    bool         shutdown;
    unsigned int correctionTime;
    unsigned int statReportingPeriod;
-   bool             policyEnabled;
-   bool             perSubSystemCompentEnabled;
-   bool             globalPolicyControlEnabled;
+   nmprk::translation::aggressiveCorrect_t aggressiveCorrect;
+   bool         policyEnabled;
+   bool         perSubSystemCompentEnabled;
+   bool         globalPolicyControlEnabled;
   }policy_t;
 
   typedef struct {
@@ -81,6 +108,13 @@ namespace nmprk {
    unsigned int statReportingPeriod; // the period over which the values are averaged
   }sample_t;
  
+  typedef struct {
+    bool nmVersion_1pt5;              // The value indicates what node manager version
+    bool nmVersion_2pt0;              //   the server is
+    bool ipmiVersion_1pt0;            // The value indicates what ipmi version the
+    bool ipmiVersion_2pt0;            //   server is
+  } nmVersion_t;
+
   typedef struct {
    // These settings on matter on NM Type systems, ignore them other wise
    unsigned int maxConSettings;       // The total number of connects this device supports
