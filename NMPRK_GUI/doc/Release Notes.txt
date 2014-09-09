@@ -1,0 +1,26 @@
+NMPRK Release Notes:
+
+Version 1.3.0:
+- Added some enums that were missing for NMPRK_GetStatistics
+
+Version 1.2.5:
+- Added C interface to allow access from C, C++, or C# applications.
+
+- Added support for NM 3.0 commands.
+
+- Same transport interface is now used on Windows and Linux.
+
+- Data is now passed through the interface as a byte based structure and not converted to a hex string vector.
+
+- Added API calls to allow user to tell NMPRK to log to debug file or make callback on debug messages.
+- Fixed bug with function list when connecting to new server
+
+Version 1.1.8:
+
+- Fixed some incorrect input/output structures
+- Changed Manually Input Bridging Parameters to Manually Enter Bridging Parameters
+- Set tabs to 4 spaces
+- Fixed Policy Suspend Period checkboxes
+- Fixed copy/paste from textboxes
+- Changed title to NMPRK - Node Manager Programmers Reference Kit
+- Changed copyright text in About dialog

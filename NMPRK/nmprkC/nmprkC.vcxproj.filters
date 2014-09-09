@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SlimIPMI">
+      <UniqueIdentifier>{db2cac36-64ae-43e7-85e2-f441a8aa1e24}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nmprkC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nmprkUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nmprkTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="transportInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="transportInterfaceOriginal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="transportInterfaceSlim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteVector.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="CryptoProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="DcmiIpmiProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLog.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="IntelIpmiProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="IpmiProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="MicrosoftIpmiProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="OsSpecificSockets.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiError.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiHeader.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiPayload.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiProxy.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiRequest.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiResponse.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppIpmiSession.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="RmcppTypes.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="WinDeviceFunctions.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="WinExcept.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+    <ClInclude Include="nmprkMutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nmprkErrorCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imbapi.h">
+      <Filter>SlimIPMI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nmprkC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nmprkUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="transportInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="transportInterfaceOriginal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="transportInterfaceSlim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteVector.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="CryptoProxyWin32.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="DcmiIpmiProxy.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="IntelIpmiProxy.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="IpmiProxy.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="MicrosoftIpmiProxy.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiError.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiHeader.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiPayload.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiProxy.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiRequest.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiResponse.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppIpmiSession.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="RmcppTypes.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="WinDeviceFunctions.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="WinExcept.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+    <ClCompile Include="imbapi.cpp">
+      <Filter>SlimIPMI</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

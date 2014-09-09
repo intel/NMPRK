@@ -1,0 +1,18 @@
+Intel Node Manager Programmers Reference Kit (NMPRK)
+
+Release Notes
+
+08/20/2014
+-------------------------------------------------------------------------------
+- Added some missing enums for Get Statistics call
+- Fixed a couple minor bugs in the disconnect path
+
+04/15/2014
+-------------------------------------------------------------------------------
+- Change to C based API to allow access from C, C++, or C# applications.
+- Added support for NM 3.0 commands.
+- Same transport interface is now used on Windows and Linux.
+- Data is now passed through the interface as a byte based structure and not 
+  converted to a hex string vector.
+- Added API calls to allow user to tell NMPRK to log to debug file or make 
+  callback on debug messages.

@@ -1,0 +1,563 @@
+﻿<Window x:Class="NMPRK_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:my="clr-namespace:NMPRK_GUI"
+        xmlns:IPAddressWPFUserControl="clr-namespace:IPAddressWPFUserControl"
+        Title="NMPRK-GUI" Height="600" Width="800" WindowStartupLocation="CenterScreen" Closing="Window_Closing" MinWidth="800" MinHeight="600" Icon="/NMPRK_GUI;component/Resources/1381774542_15195.ico" Background="WhiteSmoke" ResizeMode="NoResize">
+    <Window.Resources>
+        <my:MyEnumToStringConverter x:Key="MyEnumToStringConverter"/>
+        <my:IntToHexStringConverter x:Key="IntToHexStringConverter"/>
+        <Style TargetType="ListBox" >
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="IsTabStop" Value="False" />
+        </Style>
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="HeaderStyle" TargetType="Label">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="VerticalContentAlignment" Value="Bottom"></Setter>
+        </Style>
+        <Style x:Key="TextBoxBorderStyle" TargetType="Border">
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="45" ShadowDepth="2" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="BorderBrush" Value="Black" />
+        </Style>
+        <Style x:Key="ControlInsideBorderStyle" TargetType="Control">
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="0.5" />
+        </Style>
+        <Style x:Key="ControlOutsideBorderStyle" TargetType="Control">
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="6" />
+        </Style>
+        
+        <!-- Default DataTemplate Input -->
+        <DataTemplate x:Key="DefaultDataTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" KeyboardNavigation.TabIndex="0">
+                    <TextBox.Text>
+                        <Binding Path="Value" Mode="TwoWay" UpdateSourceTrigger="LostFocus" NotifyOnValidationError="True" />
+                    </TextBox.Text>
+                </TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Default DataTemplate Input -->
+        <DataTemplate x:Key="DefaultDataDisplayHexTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" KeyboardNavigation.TabIndex="0" Initialized="tbValue_Initialized">
+                    <TextBox.Text>
+                        <Binding Path="Value" Mode="TwoWay" UpdateSourceTrigger="LostFocus" NotifyOnValidationError="True" Converter="{StaticResource IntToHexStringConverter}" />
+                    </TextBox.Text>
+                </TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate for Booleans -->
+        <DataTemplate x:Key="BooleanDataTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:, UpdateSourceTrigger=LostFocus}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <CheckBox Margin="8,0" Grid.Column="1" IsChecked="{Binding Value}" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate for Enums -->
+        <DataTemplate x:Key="EnumDataTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <ComboBox Margin="8,0" SelectedValue="{Binding Value, Converter={StaticResource MyEnumToStringConverter}}" 
+                          ItemsSource="{Binding PropertyType, Converter={my:EnumToListConverter}, Mode=OneWay}" 
+                          Grid.Column="1"  HorizontalAlignment="Stretch" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SuspendPeriodTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <ComboBox Margin="8,0" SelectedValue="{Binding Path=StartTime}"
+                          ItemsSource="{Binding Path=SuspendPeriodTimeOptions, Mode=OneWay}" 
+                          Grid.Column="1"  HorizontalAlignment="Stretch" KeyboardNavigation.TabIndex="0" ToolTip="Start Time" Width="60" />
+                <ComboBox Margin="3,0" SelectedValue="{Binding Path=StopTime}"
+                          ItemsSource="{Binding Path=SuspendPeriodTimeOptions, Mode=OneWay}" 
+                          Grid.Column="2"  HorizontalAlignment="Stretch" KeyboardNavigation.TabIndex="0" ToolTip="Stop Time" Width="60" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="3" IsChecked="{Binding RecurrenceMonday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Monday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="4" IsChecked="{Binding RecurrenceTuesday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Tuesday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="5" IsChecked="{Binding RecurrenceWednesday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Wednesday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="6" IsChecked="{Binding RecurrenceThursday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Thursday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="7" IsChecked="{Binding RecurrenceFriday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Friday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="8" IsChecked="{Binding RecurrenceSaturday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Saturday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="9" IsChecked="{Binding RecurrenceSunday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Sunday" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ByteArrayTemplate">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="inputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" KeyboardNavigation.TabIndex="0" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <Binding Path="ValueAsString" Mode="TwoWay" UpdateSourceTrigger="LostFocus" NotifyOnValidationError="True" >
+                            <Binding.ValidationRules>
+                                <my:HexStringValidationRule></my:HexStringValidationRule>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- Default DataTemplate Output -->
+        <DataTemplate x:Key="DefaultDataTemplateOutput">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Text="{Binding Value}" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" IsEnabled="False" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DefaultDataDisplayHexTemplateOutput">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Text="{Binding Value, StringFormat=0x{0:x}}" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" IsEnabled="False" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ByteArrayTemplateOutput">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Text="{Binding ValueAsString, Mode=OneWay}" IsEnabled="False" KeyboardNavigation.TabIndex="0" TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate for Booleans -->
+        <DataTemplate x:Key="BooleanDataTemplateOutput">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <CheckBox Margin="8,0" Grid.Column="1" IsChecked="{Binding Value}" IsEnabled="False" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate for Enums -->
+        <DataTemplate x:Key="EnumDataTemplateOutput">
+            <Grid Margin="3" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <ComboBox Margin="8,0" SelectedValue="{Binding Value, Converter={StaticResource MyEnumToStringConverter}}" 
+                          ItemsSource="{Binding PropertyType, Converter={my:EnumToListConverter}, Mode=OneWay}" 
+                          Grid.Column="1"  HorizontalAlignment="Stretch" IsEnabled="False" KeyboardNavigation.TabIndex="0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SuspendPeriodTemplateOutput">
+            <Grid Margin="3" IsEnabled="False" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" SharedSizeGroup="outputColumn1" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                <ComboBox Margin="8,0" SelectedValue="{Binding Path=StartTime}"
+                          ItemsSource="{Binding Path=SuspendPeriodTimeOptions, Mode=OneWay}" 
+                          Grid.Column="1"  HorizontalAlignment="Stretch" KeyboardNavigation.TabIndex="0" ToolTip="Start Time" Width="60" />
+                <ComboBox Margin="3,0" SelectedValue="{Binding Path=StopTime}"
+                          ItemsSource="{Binding Path=SuspendPeriodTimeOptions, Mode=OneWay}" 
+                          Grid.Column="2"  HorizontalAlignment="Stretch" KeyboardNavigation.TabIndex="0" ToolTip="Stop Time" Width="60" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="3" IsChecked="{Binding RecurrenceMonday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Monday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="4" IsChecked="{Binding RecurrenceTuesday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Tuesday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="5" IsChecked="{Binding RecurrenceWednesday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Wednesday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="6" IsChecked="{Binding RecurrenceThursday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Thursday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="7" IsChecked="{Binding RecurrenceFriday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Friday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="8" IsChecked="{Binding RecurrenceSaturday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Saturday" />
+                <CheckBox Margin="3,0,3,0" Grid.Column="9" IsChecked="{Binding RecurrenceSunday}" KeyboardNavigation.TabIndex="0" VerticalAlignment="Center" ToolTip="Sunday" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate Selector -->
+        <my:PropertyDataTemplateSelector x:Key="templateSelector"
+              DefaultDataTemplate="{StaticResource DefaultDataTemplate}"
+              BooleanDataTemplate="{StaticResource BooleanDataTemplate}" 
+              EnumDataTemplate="{StaticResource EnumDataTemplate}"
+              SuspendPeriodTemplate="{StaticResource SuspendPeriodTemplate}"
+              ByteArrayTemplate="{StaticResource ByteArrayTemplate}"
+              DefaultDataDisplayHexTemplate="{StaticResource DefaultDataDisplayHexTemplate}"/>
+
+        <!-- DataTemplate Selector -->
+        <my:PropertyDataTemplateOutputSelector x:Key="templateSelectorOutput"
+              DefaultDataTemplateOutput="{StaticResource DefaultDataTemplateOutput}"
+              BooleanDataTemplateOutput="{StaticResource BooleanDataTemplateOutput}" 
+              EnumDataTemplateOutput="{StaticResource EnumDataTemplateOutput}"
+              SuspendPeriodTemplateOutput="{StaticResource SuspendPeriodTemplateOutput}"
+              ByteArrayTemplateOutput="{StaticResource ByteArrayTemplateOutput}"
+              DefaultDataDisplayHexTemplateOutput="{StaticResource DefaultDataDisplayHexTemplateOutput}"/>
+        
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" CanExecute="btnConnect_CanExecute" Executed="btnConnect_Executed" />
+        <CommandBinding Command="my:Command.Invoke" CanExecute="btnInvoke_CanExecute" Executed="btnInvoke_Executed" />
+    </Window.CommandBindings>
+    <Grid>
+        <DockPanel Name="dockPanel1">
+            <Menu Height="23" Name="menu1" DockPanel.Dock="Top">
+                <MenuItem Header="Help" >
+                    <MenuItem Header="NMPRK GUI Help" Click="miGuiHelp_Click" />
+                    <MenuItem Header="NMPRK API Help" Click="miApiHelp_Click" />
+                    <MenuItem Header="Link to Node Manager Specification" Click="miNodeManagerSpec_Click" />
+                    <MenuItem Header="Link to IPMI Specification" Click="miIpmiSpec_Click" />
+                    <Separator />
+                    <MenuItem Header="Debug">
+                        <MenuItem Header="View Log" Click="miDebugViewLog_Click" />
+                        <MenuItem Header="Save Log" Click="miDebugSaveLog_Click" />
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="About" Click="miAbout_Click" />
+                <MenuItem Header="Exit" Click="miExit_Click" />
+            </Menu>
+            <StatusBar DockPanel.Dock="Bottom" >
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem HorizontalContentAlignment="Stretch" Margin="3,0">
+                    <Grid>
+                        <TextBox IsReadOnly="True" Text="" VerticalContentAlignment="Center" IsEnabled="False" />
+                        <Label Name="lblStatus" VerticalContentAlignment="Center" />
+                    </Grid>
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="1" Margin="3,0">
+                    <Grid>
+                        <TextBox IsReadOnly="True" Width="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsEnabled="False" />
+                        <Label Name="lblDateTime" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    </Grid>
+                </StatusBarItem>
+            </StatusBar>
+            <Grid Name="grid1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Function Signature:" Name="label2" Padding="2" Style="{StaticResource HeaderStyle}" Grid.ColumnSpan="2" Height="25" />
+                <Grid Grid.Row="1" Grid.Column="0">
+                    <Border Style="{StaticResource TextBoxBorderStyle}" >
+                        <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" Height="100" />
+                    </Border>
+                    <!--="{Binding Path=Signature, Mode=OneTime}"-->
+                    <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto" Height="100">
+                        <RichTextBox Name="textBox1" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" Margin="0" MinHeight="50" Width="740" HorizontalAlignment="Left">
+                            <RichTextBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="SelectAll"/>
+                                    <MenuItem Command="Copy"/>
+                                </ContextMenu>
+                            </RichTextBox.ContextMenu>
+                        </RichTextBox>
+                    </ScrollViewer>
+                </Grid>
+                <Label Grid.Row="2" Content="Select Function:" Height="25" Padding="2" Style="{StaticResource HeaderStyle}" />
+                <ComboBox Grid.Row="3" Height="23" Name="cbSelectFunction" SelectionChanged="cbSelectFunction_SelectionChanged" VerticalAlignment="Top" Margin="3" />
+                <TabControl Grid.Row="5" Name="tabControl1" Margin="3" KeyboardNavigation.TabNavigation="Local">
+                    <TabItem Header="Inputs" Name="tabItem1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Input Structure:" Height="25" Name="label3" Padding="2" Style="{StaticResource HeaderStyle}" />
+                            <Grid Grid.Row="1" Grid.Column="0">
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Name="svTextBox2">
+                                    <!--Text="{Binding Path=Input.Structure, Mode=OneTime, FallbackValue=None}" -->
+                                    <RichTextBox Name="textBox2" TabIndex="2" MinHeight="50" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" Width="400">
+                                        <RichTextBox.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Command="SelectAll"/>
+                                                <MenuItem Command="Copy"/>
+                                            </ContextMenu>
+                                        </RichTextBox.ContextMenu>
+                                    </RichTextBox>
+                                </ScrollViewer>
+                            </Grid>
+                            <Label Grid.Row="0" Grid.Column="1" Content="Function Input:" Height="25" Name="label7" Padding="2" Style="{StaticResource HeaderStyle}" />
+                            <Grid Grid.Row="1" Grid.Column="1" IsSharedSizeScope="True" >
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl Name="listBox1" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Path=Input}" ItemTemplateSelector="{StaticResource templateSelector}" Padding="3" KeyboardNavigation.IsTabStop="True" TabIndex="3" MinHeight="50" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Outputs" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Output Structure:" Height="25" Name="label5" Padding="2" Style="{StaticResource HeaderStyle}" />
+                            <Grid Grid.Row="1" Grid.Column="0">
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                    <!--Text="{Binding Path=Output.Structure, Mode=OneWay, FallbackValue=None}" -->
+                                    <RichTextBox Name="textBox5" TabIndex="7" MinHeight="50" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" Width="400">
+                                        <RichTextBox.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Command="SelectAll"/>
+                                                <MenuItem Command="Copy"/>
+                                            </ContextMenu>
+                                        </RichTextBox.ContextMenu>
+                                    </RichTextBox>
+                                </ScrollViewer>
+                            </Grid>
+                            <Label Grid.Row="0" Grid.Column="1" Content="Function Output:" Height="25" Name="label8" Padding="2" Style="{StaticResource HeaderStyle}" />
+                            <Grid Grid.Row="1" Grid.Column="1" IsSharedSizeScope="True" >
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl Name="listBox2" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Path=Output, Mode=OneWay}" ItemTemplateSelector="{StaticResource templateSelectorOutput}" Padding="3" TabIndex="8" MinHeight="50" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Execution" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Request Bytes:" Height="25" Name="label31" Padding="2" Style="{StaticResource HeaderStyle}" VerticalContentAlignment="Center" />
+                            <Grid Grid.Row="1" Grid.Column="1" >
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <TextBox Name="textBox3" Text="{Binding Path=RequestByteString, Mode=OneWay}" TabIndex="5" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" MinHeight="20" />
+                            </Grid>
+                            <Label Grid.Row="2" Content="Return Value:" Height="25" Name="label4" Padding="2" Style="{StaticResource HeaderStyle}" VerticalContentAlignment="Center" />
+                            <Grid Grid.Row="3" Grid.Column="1" >
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <TextBox Name="textBox4" Text="{Binding Path=ReturnValueString, Mode=OneWay}" TabIndex="6" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" MinHeight="20" />
+                            </Grid>
+                            <Label Grid.Row="4" Content="Response Bytes:" Height="25" Name="label6" Padding="2" Style="{StaticResource HeaderStyle}" VerticalContentAlignment="Center" />
+                            <Grid Grid.Row="5" Grid.Column="1" >
+                                <Border Style="{StaticResource TextBoxBorderStyle}" >
+                                    <TextBox IsReadOnly="True" Style="{StaticResource ControlInsideBorderStyle}" />
+                                </Border>
+                                <TextBox Name="textBox6" Text="{Binding Path=ResponseByteString, Mode=OneWay}" TabIndex="9" IsReadOnly="True" Style="{StaticResource ControlOutsideBorderStyle}" MinHeight="20" />
+                            </Grid>
+                            <Button Grid.Row="7" Height="23" Name="btnInvoke" Command="my:Command.Invoke" TabIndex="4" MinHeight="32" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="3" Margin="5" IsDefault="True">
+                                <Grid>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Invoke Function</TextBlock>
+                                    <!--<Image Source="/NMPRK_GUI;component/Resources/Start32.png" Width="32" Height="32" HorizontalAlignment="Right" Margin="0,0,5,0"></Image>-->
+                                </Grid>
+                            </Button>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Connection" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <GroupBox Header="Connection Type" Name="gbConnectionType" Grid.Row="0" Grid.Column="0" Margin="3">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <RadioButton Grid.Row="0" Content="Local" Height="16" Name="rbLocal" Padding="4,0,0,0" Margin="10,3,3,3" IsChecked="True" HorizontalAlignment="Left" />
+                                    <RadioButton Grid.Row="1" Content="Remote" Height="16" Name="rbRemote" Padding="4,0,0,0"  Margin="10,3,3,3" HorizontalAlignment="Left" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="BMC Information" Name="gbBmcInformation" Grid.Row="1" Grid.ColumnSpan="2" Margin="3">
+                                <Grid Name="gridBmcInformation" MinWidth="0" Margin="3">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="IP Address:" VerticalAlignment="Center"></Label>
+                                    <IPAddressWPFUserControl:IPAddressControl KeyboardNavigation.TabNavigation="Local" Grid.Column="2" Margin="3" x:Name="tbIpAddress" IsEnabled="{Binding ElementName=rbRemote, Path=IsChecked}" MinWidth="200" Height="23" />
+                                    <Label Grid.Row="1" Content="Username:" Height="28" VerticalAlignment="Center"></Label>
+                                    <my:SelectAllTextBox Grid.Column="1" Grid.Row="1" Text="" Margin="3" x:Name="tbUsername" IsEnabled="{Binding ElementName=rbRemote, Path=IsChecked}" MinWidth="200" Height="23" />
+                                    <Label Grid.Row="2" Content="Password:" VerticalAlignment="Center"></Label>
+                                    <PasswordBox Grid.Column="1" Grid.Row="2" Password="" Margin="3" Name="tbPassword" IsEnabled="{Binding ElementName=rbRemote, Path=IsChecked}" MinWidth="200" Height="23" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Grid.ColumnSpan="2" Grid.Row="2" Name="gbUseBridgingInformation" Margin="3">
+                                <GroupBox.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox VerticalAlignment="Center" Name="cbUseBridgingInformation"></CheckBox>
+                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">Manually Enter Bridging Information</TextBlock>
+                                    </StackPanel>
+                                </GroupBox.Header>
+                                <Grid Margin="3">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="Channel:" VerticalAlignment="Center"></Label>
+                                    <ComboBox Grid.Column="1" Margin="3" Name="cbNmChannel" IsEnabled="{Binding ElementName=cbUseBridgingInformation, Path=IsChecked}" MinWidth="50" Height="23" />
+                                    <Label Grid.Column="2" Content="Address:" VerticalAlignment="Center"></Label>
+                                    <ComboBox Grid.Column="3" Margin="3" Name="cbNmAddress" IsEnabled="{Binding ElementName=cbUseBridgingInformation, Path=IsChecked}" MinWidth="50" Height="23" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Grid.Row="0" Header="Action" Name="groupBox3" Grid.Column="1" Margin="3">
+                                <Grid Grid.Row="7" >
+                                    <Button Width="100" Height="23" Name="btnConnect" Content="Connect" Command="ApplicationCommands.Open" IsDefault="True" Grid.Column="1" Margin="3"></Button>
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Header="Connection Information" Name="groupBox4" Margin="3">
+                                <ScrollViewer Style="{StaticResource ControlOutsideBorderStyle}" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl Grid.IsSharedSizeScope="True" Name="lbConnectionInfo" HorizontalContentAlignment="Stretch" Padding="3" Style="{StaticResource ControlInsideBorderStyle}" MinHeight="50">
+                                        <ItemsControl.BorderBrush>
+                                            <SolidColorBrush />
+                                        </ItemsControl.BorderBrush>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="3" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" SharedSizeGroup="outputColumn2" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Name="tbName" Text="{Binding Path=Name, StringFormat={}{0}:}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                                                    <TextBox Name="tbValue" Margin="8,0" Grid.Column="1" Text="{Binding Value}" Style="{StaticResource textBoxInError}" Validation.Error="tbValue_Error" IsEnabled="False" KeyboardNavigation.TabIndex="0" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </GroupBox>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
